@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('partials/head') %>
+    <title><%= course.name %> - EduTech Platform</title>
+  </head>
+  <body>
+    <%- include('partials/navbar', { user: locals.user || {} }) %>
+
+    <div class="container mt-5">
+      <div class="row">
+        <div class="col-md-8">
+          <h1><%= course.name %></h1>
+          <p class="text-muted">
+            <i class="bi bi-tag"></i> <%= course.Category.name %> |
+            <i class="bi bi-clock"></i> <%= getDurationInHours(course.duration)
+            %> | <i class="bi bi-cash"></i> <%= formatRupiah(course.price) %>
+          </p>
+
+          <img
+            src="<%= course.imageUrl %>"
+            class="img-fluid mb-4"
+            alt="<%= course.name %>"
+          />
+
+          <h3>Course Description</h3>
+          <p><%= course.description %></p>
+
+          <h3>Instructor</h3>
+          <div class="card mb-4">
+            <div class="card-body">
+              <h5><%= course.Instructor.UserProfile.fullName %></h5>
+              <p>@<%= course.Instructor.username %></p>
+            </div>
+          </div>
+
+          <h3>Enrolled Students (<%= course.Students.length %>)</h3>
+          <div class="row">
+            <% course.Students.forEach(student => { %>
+            <div class="col-md-6 mb-2">
+              <div class="card">
+                <div class="card-body">
+                  <p class="mb-0"><%= student.UserProfile.fullName %></p>
+                  <small class="text-muted">@<%= student.username %></small>
+                </div>
+              </div>
+            </div>
+            <% }) %>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Course Actions</h5>
+
+              <% if (locals.user && user.userId) { %> <% if (user.role ===
+              'student' && !isEnrolled) { %>
+              <form action="/courses/<%= course.id %>/enroll" method="POST">
+                <button type="submit" class="btn btn-success w-100">
+                  Enroll Now
+                </button>
+              </form>
+              <% } else if (user.role === 'student' && isEnrolled) { %>
+              <p class="text-success">You are enrolled in this course</p>
+              <% } else if (user.role === 'instructor' && course.UserId ===
+              user.userId) { %>
+              <a
+                href="/courses/<%= course.id %>/edit"
+                class="btn btn-warning w-100 mb-2"
+                >Edit Course</a
+              >
+              <a
+                href="/courses/<%= course.id %>/delete"
+                class="btn btn-danger w-100"
+                onclick="return confirm('Are you sure?')"
+                >Delete Course</a
+              >
+              <% } %> <% } else { %>
+              <p>Please <a href="/login">login</a> to enroll</p>
+              <% } %>
+            </div>
+          </div>
+        </div>
+
+        <!-- In views/courseDetail.ejs, update the student section -->
+        <% if (locals.user && locals.user.role === 'student') { %> <% if
+        (isEnrolled) { %> <% if (enrollment && enrollment.status ===
+        'completed') { %>
+        <button class="btn btn-success w-100 mb-2" disabled>
+          <i class="bi bi-check-circle"></i> Course Completed
+        </button>
+        <a
+          href="/certificate/<%= locals.user.userId %>/<%= course.id %>"
+          class="btn btn-primary w-100 mb-2"
+        >
+          <i class="bi bi-award"></i> Get Certificate
+        </a>
+        <% } else { %>
+        <button class="btn btn-secondary w-100 mb-2" disabled>
+          <i class="bi bi-check-circle"></i> Already Enrolled
+        </button>
+        <form action="/courses/<%= course.id %>/complete" method="POST">
+          <button type="submit" class="btn btn-success w-100 mb-2">
+            <i class="bi bi-check-square"></i> Mark as Complete
+          </button>
+        </form>
+        <% } %>
+        <a href="/dashboard" class="btn btn-outline-primary w-100">
+          Go to Dashboard
+        </a>
+        <% } else { %>
+        <form action="/courses/<%= course.id %>/enroll" method="POST">
+          <button type="submit" class="btn btn-primary w-100 mb-2">
+            <i class="bi bi-cart-plus"></i> Enroll Now
+          </button>
+        </form>
+        <% } %> <% } %>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

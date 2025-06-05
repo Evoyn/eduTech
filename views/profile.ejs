@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('partials/head') %>
+    <title>Profile - EduTech Platform</title>
+  </head>
+  <body>
+    <%- include('partials/navbar', { user: locals.user || {} }) %>
+
+    <div class="container mt-5">
+      <div class="row justify-content-center">
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-header">
+              <h3>My Profile</h3>
+            </div>
+            <div class="card-body">
+              <% if (locals.success) { %>
+              <div class="alert alert-success"><%= success %></div>
+              <% } %>
+
+              <form action="/profile" method="POST">
+                <div class="row">
+                  <div class="col-md-6">
+                    <h5>Account Information</h5>
+                    <div class="mb-3">
+                      <label class="form-label">Username</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        value="<%= user.username %>"
+                        disabled
+                      />
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Email</label>
+                      <input
+                        type="email"
+                        class="form-control"
+                        value="<%= user.email %>"
+                        disabled
+                      />
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Role</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        value="<%= user.role %>"
+                        disabled
+                      />
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <h5>Profile Information</h5>
+                    <div class="mb-3">
+                      <label for="fullName" class="form-label">Full Name</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="fullName"
+                        name="fullName"
+                        value="<%= user.UserProfile.fullName %>"
+                        required
+                      />
+                    </div>
+                    <div class="mb-3">
+                      <label for="phoneNumber" class="form-label"
+                        >Phone Number</label
+                      >
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="phoneNumber"
+                        name="phoneNumber"
+                        value="<%= user.UserProfile.phoneNumber || '' %>"
+                      />
+                    </div>
+                    <div class="mb-3">
+                      <label for="dateOfBirth" class="form-label"
+                        >Date of Birth</label
+                      >
+                      <input
+                        type="date"
+                        class="form-control"
+                        id="dateOfBirth"
+                        name="dateOfBirth"
+                        value="<%= user.UserProfile.dateOfBirth ? user.UserProfile.dateOfBirth.toISOString().split('T')[0] : '' %>"
+                      />
+                    </div>
+                    <div class="mb-3">
+                      <label for="address" class="form-label">Address</label>
+                      <textarea
+                        class="form-control"
+                        id="address"
+                        name="address"
+                        rows="3"
+                      >
+                        <%= user.UserProfile.address || '' %></textarea
+                      >
+                    </div>
+                    <% if (user.UserProfile.age) { %>
+                    <p>Age: <%= user.UserProfile.age %> years old</p>
+                    <% } %>
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                  Update Profile
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

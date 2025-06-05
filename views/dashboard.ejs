@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('partials/head') %>
+    <title>Dashboard - EduTech Platform</title>
+  </head>
+  <body>
+    <%- include('partials/navbar', { user: locals.user || {} }) %>
+    <div class="container mt-5">
+      <h1>Dashboard</h1>
+      <p>Welcome, <%= user.UserProfile.fullName %>!</p>
+
+      <% if (locals.error) { %>
+      <div class="alert alert-danger"><%= error %></div>
+      <% } %> <% if (locals.success) { %>
+      <div class="alert alert-success"><%= success %></div>
+      <% } %> <% if (user.role === 'instructor') { %>
+      <h3>My Courses</h3>
+      <a href="/courses/add" class="btn btn-primary mb-3">Add New Course</a>
+
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Category</th>
+              <th>Duration</th>
+              <th>Price</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% data.courses.forEach(course => { %>
+            <tr>
+              <td><%= course.name %></td>
+              <td><%= course.Category.name %></td>
+              <td><%= getDurationInHours(course.duration) %></td>
+              <td><%= formatRupiah(course.price) %></td>
+              <td>
+                <a href="/courses/<%= course.id %>" class="btn btn-sm btn-info"
+                  >View</a
+                >
+                <a
+                  href="/courses/<%= course.id %>/edit"
+                  class="btn btn-sm btn-warning"
+                  >Edit</a
+                >
+                <a
+                  href="/courses/<%= course.id %>/delete"
+                  class="btn btn-sm btn-danger"
+                  onclick="return confirm('Are you sure?')"
+                  >Delete</a
+                >
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+      <% } else { %> <% if (user.role === 'student') { %>
+      <h3>My Enrolled Courses</h3>
+
+      <div class="row">
+        <% data.enrollments.forEach(enrollment => { %>
+        <div class="col-md-6 mb-4">
+          <div class="card">
+            <% if (enrollment.status === 'completed') { %>
+            <div class="card-header bg-success text-white">
+              <i class="bi bi-check-circle"></i> Completed
+            </div>
+            <% } else { %>
+            <div class="card-header bg-primary text-white">
+              <i class="bi bi-clock"></i> In Progress
+            </div>
+            <% } %>
+
+            <div class="card-body">
+              <h5 class="card-title"><%= enrollment.Course.name %></h5>
+              <p class="card-text">
+                <i class="bi bi-tag"></i> <%= enrollment.Course.Category.name
+                %><br />
+                <i class="bi bi-person"></i> <%=
+                enrollment.Course.Instructor.email %><br />
+                <i class="bi bi-calendar"></i> Enrolled: <%=
+                enrollment.formattedDate %><br />
+                <i class="bi bi-info-circle"></i> Status:
+                <span
+                  class="badge bg-<%= enrollment.status === 'completed' ? 'success' : 'primary' %>"
+                >
+                  <%= enrollment.status %>
+                </span>
+              </p>
+
+              <div class="d-grid gap-2">
+                <a
+                  href="/courses/<%= enrollment.Course.id %>"
+                  class="btn btn-primary btn-sm"
+                >
+                  <i class="bi bi-eye"></i> View Course
+                </a>
+
+                <% if (enrollment.status === 'completed') { %>
+                <a
+                  href="/certificate/<%= enrollment.UserId %>/<%= enrollment.CourseId %>"
+                  class="btn btn-success btn-sm"
+                >
+                  <i class="bi bi-award"></i> Get Certificate
+                </a>
+                <% } else { %>
+                <form
+                  action="/courses/<%= enrollment.Course.id %>/complete"
+                  method="POST"
+                >
+                  <button type="submit" class="btn btn-warning btn-sm w-100">
+                    <i class="bi bi-check-square"></i> Mark as Complete
+                  </button>
+                </form>
+                <% } %>
+              </div>
+            </div>
+          </div>
+        </div>
+        <% }) %>
+      </div>
+
+      <% if (data.enrollments.length === 0) { %>
+      <div class="alert alert-info">
+        You haven't enrolled in any courses yet.
+        <a href="/courses" class="alert-link">Browse courses</a>
+      </div>
+      <% } %> <% } %> <% } %>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
