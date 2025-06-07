@@ -233,7 +233,6 @@ class Controller {
         success,
       });
     } catch (error) {
-      console.log(error);
       res.send(error);
     }
   }
@@ -273,7 +272,6 @@ class Controller {
         const errorMessages = error.errors.map((e) => e.message).join(", ");
         return res.redirect(`/courses/add?error=${errorMessages}`);
       }
-      console.log(error);
       res.send(error);
     }
   }
@@ -371,7 +369,6 @@ class Controller {
         `/dashboard?success=Course "${courseName}" has been deleted successfully!`
       );
     } catch (error) {
-      console.error(error);
       res.redirect("/dashboard?error=Failed to delete course");
     }
   }

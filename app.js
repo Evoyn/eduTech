@@ -36,20 +36,6 @@ app.use((req, res, next) => {
 
 app.use("/", router);
 
-app.use((req, res) => {
-  res.status(404).render("error", {
-    message: "Page not found",
-    error: { status: 404 },
-  });
-});
-
-app.use((err, req, res, next) => {
-  res.status(err.status || 500).render("error", {
-    message: err.message,
-    error: process.env.NODE_ENV === "development" ? err : {},
-  });
-});
-
 app.listen(port, () => {
   console.log(`EduTech Platform running on http://localhost:${port}`);
 });

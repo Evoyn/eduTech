@@ -107,8 +107,7 @@ class AuthController {
 
         return res.redirect(`/register?error=${errorMessage}`);
       }
-
-      console.log(error);
+      
       res.send(error);
     }
   }
